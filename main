@@ -1,0 +1,55 @@
+#include "opencv2/core/core.hpp"
+#include "opencv2/objdetect/objdetect.hpp"  
+#include "opencv2/highgui/highgui.hpp"  
+#include "opencv2/imgproc/imgproc.hpp" 
+#include <opencv2/imgproc/types_c.h> 
+#include <fstream>  
+#include <iostream>  
+#include <stdio.h>  
+
+using namespace std;
+using namespace cv;
+
+string Cascade_mode = "C:\\Users\\Lab504_03\\Desktop\\專題code\\xml\\cascade.xml";   //已訓練好的分類器
+CascadeClassifier Mycascade;
+string window_name = "Pedestrain";
+
+Mat detectAndDisplay(Mat car);
+
+int main()
+{
+    Mat image, ROI;
+    printf("step 1  ok");
+
+    image = imread("C:\\Users\\Lab504_03\\Downloads\\2.jpg");//讀取圖片
+    printf("step 2  ok");
+
+    if (!image.data) { printf("[error] 沒有圖片\n");   return -5; }
+
+    if (!Mycascade.load(Cascade_mode)) { printf("[error] 無法加載級聯分類器文件！\n");   return -1; }
+    printf("step 3  ok");
+
+    ROI = detectAndDisplay(image);
+    waitKey(0);
+    return 4;
+}
+
+Mat detectAndDisplay(Mat frame)
+{
+    std::vector<Rect> pedestrain;
+    Mat frame_gray(frame.size(), CV_8U);
+    cvtColor(frame, frame_gray, CV_BGR2GRAY);
+    equalizeHist(frame_gray, frame_gray);
+
+    Mycascade.detectMultiScale(frame_gray, pedestrain, 1.1, 2, 0, Size(15, 15));
+
+    for (int i = 0; i < int(pedestrain.size()); i++) {
+        rectangle(frame,                   //圖像.  
+            pedestrain[i],
+            Scalar(0, 255, 0),     //線條顏色 (RGB) 或亮度（灰度圖像 ）(grayscale image）  
+            1);                   //組成矩形的線條的粗細程度。取負值時（如 CV_FILLED）函數繪制填充了色彩的矩形 
+    }
+
+    imshow(window_name, frame);
+    return frame;
+}
