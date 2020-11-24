@@ -10,7 +10,7 @@
 using namespace std;
 using namespace cv;
 
-string Cascade_mode = "C:\\Users\\Lab504_03\\Desktop\\專題code\\xml\\cascade.xml";   //已訓練好的分類器
+string Cascade_mode = "C:\\program\\20201022\\20201022.xml";   //已訓練好的分類器
 CascadeClassifier Mycascade;
 string window_name = "Pedestrain";
 
@@ -21,7 +21,7 @@ int main()
     Mat image, ROI;
     printf("step 1  ok");
 
-    image = imread("C:\\Users\\Lab504_03\\Downloads\\2.jpg");//讀取圖片
+    image = imread("C:\\Users\\Lab504_03\\Pictures\\pictures_home\\2.jpg");//讀取圖片
     printf("step 2  ok");
 
     if (!image.data) { printf("[error] 沒有圖片\n");   return -5; }
@@ -30,12 +30,14 @@ int main()
     printf("step 3  ok");
 
     ROI = detectAndDisplay(image);
+    
     waitKey(0);
     return 4;
 }
 
 Mat detectAndDisplay(Mat frame)
 {
+    int count=0;
     std::vector<Rect> pedestrain;
     Mat frame_gray(frame.size(), CV_8U);
     cvtColor(frame, frame_gray, CV_BGR2GRAY);
@@ -47,8 +49,12 @@ Mat detectAndDisplay(Mat frame)
         rectangle(frame,                   //圖像.  
             pedestrain[i],
             Scalar(0, 255, 0),     //線條顏色 (RGB) 或亮度（灰度圖像 ）(grayscale image）  
-            1);                   //組成矩形的線條的粗細程度。取負值時（如 CV_FILLED）函數繪制填充了色彩的矩形 
+            1);   //組成矩形的線條的粗細程度。取負值時（如 CV_FILLED）函數繪制填充了色彩的矩形 
+
+        count = count + i;//計數
     }
+
+    cout << count;
 
     imshow(window_name, frame);
     return frame;
